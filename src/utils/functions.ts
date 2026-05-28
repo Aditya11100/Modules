@@ -47,3 +47,30 @@ export const getMicPermission = async (successCallback?: Function) => {
       console.log('Micriphone permission error', error);
     });
 };
+
+export const checkCameraPermission = (successCallback?: Function) => {
+  request(
+    Platform.select({
+      ios: PERMISSIONS.IOS.CAMERA,
+      android: PERMISSIONS.ANDROID.CAMERA,
+    } as never),
+  )
+    .then(Response => {
+      if (Response === 'granted' || Response === 'limited') {
+        successCallback?.();
+      } else if (Response === 'blocked' || Response === 'denied') {
+        dualAlertButton(
+          'Camera Permission Disabled',
+          'Please Enable it from Settings',
+          () => {
+            openSettings();
+          },
+        );
+      } else if (Response === 'unavailable') {
+        singleAlertButton('Not available', 'Camera service is not available');
+      }
+    })
+    .catch(err => {
+      console.log('ERROR', err);
+    });
+};
