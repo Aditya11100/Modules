@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { checkCameraPermission } from '../../utils/functions';
 import {
   Camera,
@@ -10,6 +10,16 @@ import {
 } from 'react-native-vision-camera';
 
 const VisionCamera = () => {
+  const [showCamera, setShowCamera] = useState(false);
+
+  useEffect(() => {
+    if (!showCamera) {
+      setTimeout(() => {
+        setShowCamera(true);
+      }, 500);
+    }
+  }, [showCamera]);
+
   const cameraRef = useRef<CameraRef>(null);
 
   const videoOutput = useVideoOutput({
@@ -32,13 +42,15 @@ const VisionCamera = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Camera
-        ref={cameraRef}
-        style={StyleSheet.absoluteFill}
-        isActive={true}
-        device={'front'}
-        outputs={[videoOutput]}
-      />
+      {showCamera && (
+        <Camera
+          ref={cameraRef}
+          style={StyleSheet.absoluteFill}
+          isActive={true}
+          device={'front'}
+          outputs={[videoOutput]}
+        />
+      )}
       <View style={styles.actionButton}>
         <TouchableOpacity style={styles.record} onPress={async () => {}}>
           <View
