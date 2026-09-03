@@ -8,9 +8,18 @@ import {
   usePhotoOutput,
   useVideoOutput,
 } from 'react-native-vision-camera';
+import { useTensorflowModel } from 'react-native-fast-tflite';
+import { Skia, BlendMode } from '@shopify/react-native-skia';
 
 const VisionCamera = () => {
   const [showCamera, setShowCamera] = useState(false);
+
+  const plugin = useTensorflowModel(
+    require('../../assets/selfie_segmentation.tflite'),
+    [],
+  );
+
+  const model = plugin.state === 'loaded' ? plugin.model : null;
 
   useEffect(() => {
     if (!showCamera) {
