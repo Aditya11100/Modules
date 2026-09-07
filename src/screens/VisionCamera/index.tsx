@@ -8,6 +8,7 @@ import {
   usePhotoOutput,
   useVideoOutput,
 } from 'react-native-vision-camera';
+import { SkiaCamera } from 'react-native-vision-camera-skia';
 import { useTensorflowModel } from 'react-native-fast-tflite';
 import { Skia, BlendMode } from '@shopify/react-native-skia';
 
@@ -52,12 +53,24 @@ const VisionCamera = () => {
   return (
     <View style={{ flex: 1 }}>
       {showCamera && (
-        <Camera
-          ref={cameraRef}
-          style={StyleSheet.absoluteFill}
+        // <Camera
+        //   ref={cameraRef}
+        //   style={StyleSheet.absoluteFill}
+        //   isActive={true}
+        //   device={'front'}
+        //   outputs={[videoOutput]}
+        // />
+        <SkiaCamera
+          device="front"
           isActive={true}
-          device={'front'}
-          outputs={[videoOutput]}
+          style={StyleSheet.absoluteFill}
+          onFrame={(frame, render) => {
+            'worklet';
+            render(({ canvas, frameTexture }) => {
+              canvas.drawImage(frameTexture, 0, 0);
+            });
+            frame.dispose();
+          }}
         />
       )}
       <View style={styles.actionButton}>
